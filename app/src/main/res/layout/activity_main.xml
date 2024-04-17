@@ -19,6 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+        android:gravity="center"
         android:padding="28dp">
 
         <ImageView
@@ -28,10 +29,9 @@
             android:src="@drawable/location_icon" />
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:gravity="center"
             android:text="CHI IN BELLA?"
             android:textColor="@color/white"
             android:textSize="32sp"
@@ -44,12 +44,12 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         app:cardCornerRadius="28dp"
-        android:layout_marginBottom="-20dp"
-        >
+        android:layout_marginBottom="-20dp">
+
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="28dp">
 
@@ -81,6 +81,9 @@
                 android:layout_height="wrap_content"
                 android:inputType="textEmailAddress"/>
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,30 +98,38 @@
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="wrap_content"/>
 
             <CheckBox
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Ricorda le credenziali"
                 android:layout_centerVertical="true"
                 android:alpha="0.7"/>
 
+        <View
+            android:layout_width="wrap_content"
+            android:layout_height="10dp"/>
+        
+        <com.google.android.material.button.MaterialButton
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Login"
+            app:cornerRadius="32dp"/>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:alpha="0.5"
+            android:layout_gravity="center"
+            android:text="Esegui il login con le tue informazioni" />
 
-
-
-
-
-
-
-
-
-
+        <ImageView
+            android:layout_width="50dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:src="@drawable/google" />
     </LinearLayout>
-
-
     </androidx.cardview.widget.CardView>
-
 
 </RelativeLayout>
