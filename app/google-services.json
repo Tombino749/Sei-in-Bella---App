@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "492143439956",
+    "project_id": "sei-in-bella",
+    "storage_bucket": "sei-in-bella.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492143439956:android:8fccac9015a984968b7dc1",
+        "android_client_info": {
+          "package_name": "com.example.seiinbella"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc8MlQWO1Z2F9MXSNRDMCt9RkcKIx84w0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
