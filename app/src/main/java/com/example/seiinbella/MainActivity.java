@@ -10,6 +10,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends AppCompatActivity {
 
+    Button googleAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

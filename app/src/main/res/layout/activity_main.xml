@@ -78,8 +78,9 @@
 
             <EditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textEmailAddress"/>
+                android:layout_height="48dp"
+                android:inputType="textEmailAddress"
+                android:hint="Email"/>
 
         <View
             android:layout_width="wrap_content"
@@ -93,8 +94,9 @@
 
         <EditText
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:inputType="textPassword"/>
+            android:layout_height="48dp"
+            android:inputType="textPassword"
+            android:hint="Password"/>
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -124,11 +126,13 @@
             android:layout_gravity="center"
             android:text="Esegui il login con le tue informazioni" />
 
-        <ImageView
+        <ImageButton
             android:layout_width="50dp"
             android:layout_height="60dp"
             android:layout_gravity="center"
             android:src="@drawable/google" />
+
+
     </LinearLayout>
     </androidx.cardview.widget.CardView>
 
