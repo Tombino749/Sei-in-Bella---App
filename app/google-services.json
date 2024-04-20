@@ -12,7 +12,20 @@
           "package_name": "com.example.seiinbella"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "492143439956-j1k382m5pn2nmnclevj690imbrf72s72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.seiinbella",
+            "certificate_hash": "5587298fbe000b46a5cf19e4071fec9f6f8b18ef"
+          }
+        },
+        {
+          "client_id": "492143439956-7v22sle8ronhh7l552252l8mojsvg4g2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAc8MlQWO1Z2F9MXSNRDMCt9RkcKIx84w0"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492143439956-7v22sle8ronhh7l552252l8mojsvg4g2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
