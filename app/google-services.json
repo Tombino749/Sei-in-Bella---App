@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "492143439956",
+    "project_id": "sei-in-bella",
+    "storage_bucket": "sei-in-bella.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:492143439956:android:8fccac9015a984968b7dc1",
+        "android_client_info": {
+          "package_name": "com.example.seiinbella"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "492143439956-j1k382m5pn2nmnclevj690imbrf72s72.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.seiinbella",
+            "certificate_hash": "5587298fbe000b46a5cf19e4071fec9f6f8b18ef"
+          }
+        },
+        {
+          "client_id": "492143439956-7v22sle8ronhh7l552252l8mojsvg4g2.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAc8MlQWO1Z2F9MXSNRDMCt9RkcKIx84w0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "492143439956-7v22sle8ronhh7l552252l8mojsvg4g2.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
