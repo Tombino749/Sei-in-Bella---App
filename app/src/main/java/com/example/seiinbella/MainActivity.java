@@ -17,6 +17,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthCredential;
@@ -30,8 +31,10 @@ import android.widget.Toast;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
 import com.example.seiinbella.Mappa;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final int RC_SIGN_IN = 9001;
 
@@ -69,6 +72,8 @@ public class MainActivity extends AppCompatActivity {
                 googleSignIn();
             }
         });
+
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
     }
 
     private void googleSignIn() {
@@ -115,4 +120,11 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
+
+        @Override
+        public void onMapReady(@NonNull GoogleMap googleMap) {
+
+        }
+
+
 }
