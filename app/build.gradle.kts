@@ -50,4 +50,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth")
     apply(plugin = "com.google.gms.google-services")
     implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation ("com.google.android.gms:play-services-location:19.0.1")
+    implementation ("com.google.android.gms:play-services-maps:18.0.2")
+
 }
