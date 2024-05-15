@@ -19,6 +19,11 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MapStyleOptions;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
+import android.provider.Settings;
+import androidx.appcompat.app.AlertDialog;
 
 public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -40,13 +45,6 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("Permission", "Location permission not granted!");
-            return;
-        }
-
-        mMap.setMyLocationEnabled(true);
-        Log.d("MapReady", "Location enabled on map.");
 
         // Set the map style
         boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
@@ -54,6 +52,14 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         if (!success) {
             Log.e("MapStyle", "Style parsing failed.");
         }
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            showLocationPermissionDialog();
+            return;
+        }
+
+        mMap.setMyLocationEnabled(true);
+        Log.d("MapReady", "Location enabled on map.");
 
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
@@ -84,11 +90,27 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
     }
 
+    private void showLocationPermissionDialog() {
+        new AlertDialog.Builder(this)
+                .setMessage("Questa app richiede l'accesso alla posizione per funzionare correttamente. Vuoi attivare il GPS?")
+                .setPositiveButton("Impostazioni", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Redirect the user to the app settings
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                })
+                .show();
+    }
+
+
     private void zoomToCurrentLocation(LatLng latLng) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)); // Zoom level 15
     }
 
-    // Call this method when the location button is clicked
     public void onLocationButtonClicked() {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             Log.e("Permission", "Location permission not granted!");
