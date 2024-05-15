@@ -3,9 +3,12 @@ package com.example.seiinbella;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -19,31 +22,29 @@ import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
-import android.content.Intent;
-import android.widget.ImageButton;
-import android.widget.Toast;
 import com.google.firebase.database.FirebaseDatabase;
 import java.util.HashMap;
-import com.example.seiinbella.Mappa;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationResult;
-import android.location.Location;
-import android.os.Looper;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
+
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int RC_SIGN_IN = 9001;
     private FusedLocationProviderClient fusedLocationClient;
@@ -52,6 +53,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FirebaseAuth auth;
     FirebaseDatabase database;
     GoogleSignInClient mGoogleSignInClient;
+    FusedLocationProviderClient fusedLocationClient;
+    private LocationRequest locationRequest;
+    private LocationCallback locationCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         googleAuth.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,32 +89,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        // Aggiungi qui il codice per richiedere gli aggiornamenti della posizione
-        LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setIntervalMilis(10000); // Imposta l'intervallo di aggiornamento in millisecondi
-        locationRequest.setFastestInterval(5000); // Imposta l'intervallo di aggiornamento più veloce in millisecondi
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); // Imposta la priorità della richiesta
-        locationrequest.
-
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(LocationResult locationResult) {
-                if (locationResult == null) {
-                    return;
-                }
-                for (Location location : locationResult.getLocations()) {
-                    // Aggiorna l'interfaccia utente con le informazioni sulla posizione
-                }
-            }
-        };
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        if (mapFragment != null) {
+            mapFragment.getMapAsync(this);
         } else {
-            // Request the necessary permissions from the user
+            Log.e("MainActivity", "Map fragment is null.");
         }
     }
 
@@ -122,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode==RC_SIGN_IN){
+        if(requestCode == RC_SIGN_IN){
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
                 GoogleSignInAccount account = task.getResult(ApiException.class);
@@ -142,26 +125,53 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if(task.isSuccessful()){
                             FirebaseUser user = auth.getCurrentUser();
 
-                            HashMap<String, Object> map = new HashMap<String, Object>();
+                            HashMap<String, Object> map = new HashMap<>();
                             map.put("id", user.getUid());
-                            map.put("name",user.getDisplayName());
-                            map.put("profile",user.getPhotoUrl().toString());
+                            map.put("name", user.getDisplayName());
+                            map.put("profile", user.getPhotoUrl().toString());
 
                             database.getReference().child("users").child(user.getUid()).updateChildren(map);
-                            Intent intent = new Intent(MainActivity.this, Mappa.class);
+                            Intent intent = new Intent(MainActivity.this, Maps_Activity.class);
                             startActivity(intent);
                         } else {
-                            Toast.makeText(MainActivity.this, "Autenticazione fallita", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Authentication failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 })
-                .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     @Override
-    public void onMapReady(@NonNull GoogleMap googleMap) {
+    public void onMapReady(GoogleMap googleMap) {
+        GoogleMap mMap = googleMap;
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Log.e("Permission", "Location permission not granted!");
+            return;
+        }
 
-    }
+        mMap.setMyLocationEnabled(true);
+        Log.d("MapReady", "Location enabled on map.");
 
+        locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(10000); // 10 seconds
+        locationRequest.setFastestInterval(5000); // 5 seconds
 
-}
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    Log.d("LocationCallback", "No location data received!");
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    if (location != null) {
+                        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+                        Log.d("LocationUpdate", "Position updated: " + latLng.toString());
+                    }
+                }
+            }
+        };
+
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);}}
