@@ -1,6 +1,8 @@
 package com.example.seiinbella;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -8,7 +10,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.view.ActionMode;
+import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -33,10 +35,18 @@ import java.util.HashMap;
 import com.example.seiinbella.Mappa;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationResult;
+import android.location.Location;
+import android.os.Looper;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback{
 
     private static final int RC_SIGN_IN = 9001;
+    private FusedLocationProviderClient fusedLocationClient;
 
     ImageButton googleAuth;
     FirebaseAuth auth;
@@ -74,6 +84,33 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.map);
+
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Aggiungi qui il codice per richiedere gli aggiornamenti della posizione
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setIntervalMilis(10000); // Imposta l'intervallo di aggiornamento in millisecondi
+        locationRequest.setFastestInterval(5000); // Imposta l'intervallo di aggiornamento più veloce in millisecondi
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY); // Imposta la priorità della richiesta
+        locationrequest.
+
+        LocationCallback locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(LocationResult locationResult) {
+                if (locationResult == null) {
+                    return;
+                }
+                for (Location location : locationResult.getLocations()) {
+                    // Aggiorna l'interfaccia utente con le informazioni sulla posizione
+                }
+            }
+        };
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, Looper.getMainLooper());
+        } else {
+            // Request the necessary permissions from the user
+        }
     }
 
     private void googleSignIn() {
@@ -121,10 +158,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-        @Override
-        public void onMapReady(@NonNull GoogleMap googleMap) {
+    @Override
+    public void onMapReady(@NonNull GoogleMap googleMap) {
 
-        }
+    }
 
 
 }

@@ -42,6 +42,7 @@ dependencies {
     implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("androidx.core:core-ktx:+")
     implementation(libs.firebase.database)
+    implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
