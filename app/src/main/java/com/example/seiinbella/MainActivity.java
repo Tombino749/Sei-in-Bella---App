@@ -47,6 +47,7 @@ import java.util.HashMap;
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private static final int RC_SIGN_IN = 9001;
+    private FusedLocationProviderClient fusedLocationClient;
 
     ImageButton googleAuth;
     FirebaseAuth auth;
