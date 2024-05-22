@@ -53,7 +53,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     FirebaseAuth auth;
     FirebaseDatabase database;
     GoogleSignInClient mGoogleSignInClient;
-    FusedLocationProviderClient fusedLocationClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
 
