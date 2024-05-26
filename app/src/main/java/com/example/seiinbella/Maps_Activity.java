@@ -11,6 +11,7 @@ import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private LocationRequest locationRequest;
@@ -66,6 +68,12 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
             finish();
         });
 
+        ImageButton friendsButton = findViewById(R.id.friends_button);
+        friendsButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Maps_Activity.this, Amici.class);
+            startActivity(intent);
+        });
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -74,13 +82,6 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-
-        // Commenta o rimuovi questa parte se non hai un file map_style.json
-        // boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
-        //
-        // if (!success) {
-        //     Log.e("MapStyle", "Style parsing failed.");
-        // }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             showLocationPermissionDialog();

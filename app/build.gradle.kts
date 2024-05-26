@@ -34,24 +34,24 @@ android {
 }
 
 dependencies {
-
     implementation(libs.appcompat)
     implementation(libs.material)
     implementation(libs.activity)
     implementation(libs.constraintlayout)
-    implementation("com.google.firebase:firebase-auth:22.0.0")
     implementation("androidx.core:core-ktx:+")
-    implementation(libs.firebase.database)
     implementation(libs.play.services.location)
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
-    implementation("com.google.android.gms:play-services-auth:21.0.0")
-    implementation("com.google.firebase:firebase-auth")
-    apply(plugin = "com.google.gms.google-services")
-    implementation("com.google.android.gms:play-services-maps:18.2.0")
-    implementation ("com.google.android.gms:play-services-location:19.0.1")
-    implementation ("com.google.android.gms:play-services-maps:18.0.2")
 
+    // Firebase dependencies
+    implementation(platform("com.google.firebase:firebase-bom:32.8.1"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+
+    // Google Play services dependencies
+    implementation("com.google.android.gms:play-services-auth:21.0.0")
+    implementation("com.google.android.gms:play-services-maps:18.2.0")
+    implementation("com.google.android.gms:play-services-location:19.0.1")
+    implementation ("com.google.firebase:firebase-firestore:24.0.1")
 }

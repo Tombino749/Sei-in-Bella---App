@@ -40,4 +40,15 @@
         app:layout_constraintRight_toRightOf="parent">
     </androidx.fragment.app.FragmentContainerView>
 
+    <ImageButton
+        android:id="@+id/friends_button"
+        android:layout_width="71dp"
+        android:layout_height="66dp"
+        android:layout_margin="16dp"
+        android:scaleType="fitCenter"
+        android:background="@android:color/transparent"
+        android:src="@drawable/ic_friend"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

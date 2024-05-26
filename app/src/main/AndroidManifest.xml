@@ -17,6 +17,12 @@
         android:theme="@style/Theme.SeiInBella"
         tools:targetApi="31">
         <activity
+            android:name=".lista_Amici"
+            android:exported="false" />
+        <activity
+            android:name=".Amici"
+            android:exported="false" />
+        <activity
             android:name=".Registrazione"
             android:exported="false" />
 
@@ -33,6 +39,8 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
+
+        <activity android:name=".FriendsListActivity" />
         <activity
             android:name=".Maps_Activity"
             android:exported="true">
