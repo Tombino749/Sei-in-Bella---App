@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".RegisterActivity">
 
     <RelativeLayout
         android:id="@+id/relative_layout"
@@ -66,7 +66,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Benvenuto"
+                android:text="Registrati"
                 android:textSize="32sp"
                 android:textStyle="bold" />
 
@@ -74,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:alpha="0.5"
-                android:text="Esegui il login con le tue informazioni" />
+                android:text="Crea un nuovo account con le tue informazioni" />
 
             <View
                 android:layout_width="wrap_content"
@@ -112,41 +112,16 @@
                 android:hint="Password"
                 android:inputType="textPassword" />
 
-            <CheckBox
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:alpha="0.7"
-                android:text="Ricorda le credenziali" />
-
             <View
                 android:layout_width="wrap_content"
                 android:layout_height="10dp" />
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/login_button"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Login"
-                app:cornerRadius="32dp" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/register_button"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:text="Registrati"
-                app:cornerRadius="32dp"
-                android:layout_marginTop="10dp"/>
-
-            <ImageButton
-                android:id="@+id/btnGoogleAuth"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/google"
-                android:contentDescription="Google Sign In"
-                tools:visibility="visible" />
-
+                app:cornerRadius="32dp" />
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

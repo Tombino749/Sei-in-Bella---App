@@ -7,6 +7,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
@@ -41,8 +42,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.FirebaseDatabase;
-import java.util.HashMap;
+import android.content.Intent;
+import android.os.Bundle;
+import android.widget.Button;
 
+import androidx.appcompat.app.AppCompatActivity;
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -55,6 +60,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     GoogleSignInClient mGoogleSignInClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private Button loginButton;
+    private Button registerButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,6 +100,43 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         } else {
             Log.e("MainActivity", "Map fragment is null.");
         }
+
+        setContentView(R.layout.activity_main);
+
+        loginButton = findViewById(R.id.login_button);
+        registerButton = findViewById(R.id.register_button);
+
+        EditText emailEditText = findViewById(R.id.email_edit_text);
+        EditText passwordEditText = findViewById(R.id.password_edit_text);
+
+        loginButton.setOnClickListener(v -> {
+            // Get the email and password from the input fields
+            String email = emailEditText.getText().toString();
+            String password = passwordEditText.getText().toString();
+
+            // Sign in with email and password
+            auth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            // Sign in success, update UI with the signed-in user's information
+                            Log.d("Login", "signInWithEmail:success");
+                            FirebaseUser user = auth.getCurrentUser();
+                            // Navigate to the next activity
+                            Intent intent = new Intent(MainActivity.this, Maps_Activity.class);
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            // If sign in fails, display a message to the user.
+                            Log.w("Login", "signInWithEmail:failure", task.getException());
+                            Toast.makeText(MainActivity.this, "Authentication failed.",
+                                    Toast.LENGTH_SHORT).show();
+                        }
+                    });
+        });
+        registerButton.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, Registrazione.class);
+            startActivity(intent);
+        });
     }
 
     private void googleSignIn() {
@@ -173,4 +217,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         };
 
-        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);}}
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+    }
+}

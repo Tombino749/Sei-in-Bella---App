@@ -1,13 +1,24 @@
 package com.example.seiinbella;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -18,24 +29,42 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.provider.Settings;
-import androidx.appcompat.app.AlertDialog;
-
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
     private FusedLocationProviderClient fusedLocationClient;
     private boolean firstLocationUpdate = true;
+    private TextView userEmail;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mappa);
+
+        userEmail = findViewById(R.id.user_email);
+
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            userEmail.setText(currentUser.getEmail());
+        } else {
+            userEmail.setText("Utente non loggato");
+            // Redirect to LoginActivity if the user is not logged in
+            Intent intent = new Intent(Maps_Activity.this, MainActivity.class);
+            startActivity(intent);
+            finish(); // This will finish the current activity
+            return;
+        }
+
+        Button logoutButton = findViewById(R.id.logout_button);
+        logoutButton.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            Intent intent = new Intent(Maps_Activity.this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
@@ -46,12 +75,12 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Set the map style
-        boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
-
-        if (!success) {
-            Log.e("MapStyle", "Style parsing failed.");
-        }
+        // Commenta o rimuovi questa parte se non hai un file map_style.json
+        // boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
+        //
+        // if (!success) {
+        //     Log.e("MapStyle", "Style parsing failed.");
+        // }
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             showLocationPermissionDialog();
@@ -105,7 +134,6 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
                 })
                 .show();
     }
-
 
     private void zoomToCurrentLocation(LatLng latLng) {
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)); // Zoom level 15
