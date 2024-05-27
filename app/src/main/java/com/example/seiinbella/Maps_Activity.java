@@ -13,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.content.res.Resources;
+import com.google.android.gms.maps.model.MapStyleOptions;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -29,6 +31,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -108,6 +111,16 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         mMap.setMyLocationEnabled(true);
         Log.d("MapReady", "Location enabled on map.");
 
+        try {
+            // Carica lo stile della mappa dal file JSON
+            boolean success = mMap.setMapStyle(MapStyleOptions.loadRawResourceStyle(this, R.raw.map_style));
+            if (!success) {
+                Log.e("MapStyle", "Parsing style failed.");
+            }
+        } catch (Resources.NotFoundException e) {
+            Log.e("MapStyle", "Can't find style. Error: ", e);
+        }
+
         locationRequest = LocationRequest.create();
         locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(10000); // 10 seconds
@@ -127,10 +140,14 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
                             zoomToCurrentLocation(latLng);
                             firstLocationUpdate = false;
                         }
-                        if (userMarker == null) {
-                            userMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Your Location"));
-                        } else {
-                            userMarker.setPosition(latLng);
+                        // Aggiorna la posizione dell'utente solo se è online
+                        if (currentUser != null) {
+                            if (userMarker == null) {
+                                userMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Your Location")
+                                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)));
+                            } else {
+                                userMarker.setPosition(latLng);
+                            }
                         }
                         Log.d("LocationUpdate", "Position updated: " + latLng.toString());
                     }

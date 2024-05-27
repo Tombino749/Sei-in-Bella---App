@@ -101,8 +101,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             Log.e("MainActivity", "Map fragment is null.");
         }
 
-        setContentView(R.layout.activity_main);
-
         loginButton = findViewById(R.id.login_button);
         registerButton = findViewById(R.id.register_button);
 
@@ -140,8 +138,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void googleSignIn() {
-        Intent intent = mGoogleSignInClient.getSignInIntent();
-        startActivityForResult(intent, RC_SIGN_IN);
+        Intent signInIntent = mGoogleSignInClient.getSignInIntent();
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
