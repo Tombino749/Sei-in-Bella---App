@@ -2,6 +2,7 @@ package com.example.seiinbella;
 
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -73,8 +74,38 @@ public class lista_Amici extends AppCompatActivity {
     }
 
     private void setupFriendsRecyclerView(List<String> friendsList) {
-        FriendsAdapter friendsAdapter = new FriendsAdapter(friendsList, this, currentUser.getEmail());
+        FriendsAdapter friendsAdapter = new FriendsAdapter(friendsList, new FriendsAdapter.OnFriendActionListener() {
+            @Override
+            public void onFriendAction(String friendEmail) {
+                removeFriend(friendEmail);
+            }
+        });
         friendsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         friendsRecyclerView.setAdapter(friendsAdapter);
+    }
+
+    // Funzione per rimuovere un amico
+    private void removeFriend(String friendEmail) {
+        db.collection("friends")
+                .whereArrayContains("userIds", currentUser.getEmail())
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (DocumentSnapshot document : task.getResult()) {
+                            List<String> userIds = (List<String>) document.get("userIds");
+                            if (userIds.contains(friendEmail)) {
+                                db.collection("friends").document(document.getId()).delete()
+                                        .addOnSuccessListener(aVoid -> {
+                                            Toast.makeText(lista_Amici.this, "Amico rimosso", Toast.LENGTH_SHORT).show();
+                                            loadFriends(); // Ricarica la lista degli amici
+                                        })
+                                        .addOnFailureListener(e -> Log.e("lista_Amici", "Errore nella rimozione dell'amico", e));
+                                break;
+                            }
+                        }
+                    } else {
+                        Log.e("lista_Amici", "Errore nel recupero degli amici", task.getException());
+                    }
+                });
     }
 }

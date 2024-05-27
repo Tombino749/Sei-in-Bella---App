@@ -17,6 +17,15 @@
         android:theme="@style/Theme.SeiInBella"
         tools:targetApi="31">
         <activity
+            android:name=".Chat"
+            android:exported="false" />
+        <activity
+            android:name=".FriendRequest"
+            android:exported="false" />
+        <activity
+            android:name=".Friend"
+            android:exported="false" />
+        <activity
             android:name=".lista_Amici"
             android:exported="false" />
         <activity
@@ -39,7 +48,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true" />
-
         <activity android:name=".FriendsListActivity" />
         <activity
             android:name=".Maps_Activity"

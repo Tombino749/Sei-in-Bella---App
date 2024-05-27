@@ -74,6 +74,12 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
             startActivity(intent);
         });
 
+        ImageButton chatButton = findViewById(R.id.chat_button);
+        chatButton.setOnClickListener(v -> {
+            Intent intent = new Intent(Maps_Activity.this, Chat.class);
+            startActivity(intent);
+        });
+
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
