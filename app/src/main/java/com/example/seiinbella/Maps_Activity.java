@@ -30,8 +30,15 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallback {
     private GoogleMap mMap;
@@ -40,15 +47,19 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
     private FusedLocationProviderClient fusedLocationClient;
     private boolean firstLocationUpdate = true;
     private TextView userEmail;
+    private FirebaseFirestore db;
+    private Marker userMarker;
+    private FirebaseUser currentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mappa);
 
-        userEmail = findViewById(R.id.user_email);
+        db = FirebaseFirestore.getInstance();
 
-        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        userEmail = findViewById(R.id.user_email);
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
         if (currentUser != null) {
             userEmail.setText(currentUser.getEmail());
         } else {
@@ -116,6 +127,11 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
                             zoomToCurrentLocation(latLng);
                             firstLocationUpdate = false;
                         }
+                        if (userMarker == null) {
+                            userMarker = mMap.addMarker(new MarkerOptions().position(latLng).title("Your Location"));
+                        } else {
+                            userMarker.setPosition(latLng);
+                        }
                         Log.d("LocationUpdate", "Position updated: " + latLng.toString());
                     }
                 }
@@ -124,6 +140,8 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null);
+
+        loadFriendLocations();
     }
 
     private void showLocationPermissionDialog() {
@@ -146,18 +164,28 @@ public class Maps_Activity extends AppCompatActivity implements OnMapReadyCallba
         mMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15)); // Zoom level 15
     }
 
-    public void onLocationButtonClicked() {
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            Log.e("Permission", "Location permission not granted!");
-            return;
-        }
+    private void loadFriendLocations() {
+        db.collection("posizioniUtenti")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            String userId = document.getId();
+                            if (!userId.equals(currentUser.getUid())) {
+                                double latitude = document.getDouble("latitude");
+                                double longitude = document.getDouble("longitude");
+                                LatLng friendLocation = new LatLng(latitude, longitude);
+                                addFriendMarker(userId, friendLocation);
+                            }
+                        }
+                    } else {
+                        Log.e("LoadFriendLocations", "Error getting friend locations", task.getException());
+                    }
+                });
+    }
 
-        fusedLocationClient.getLastLocation().addOnSuccessListener(location -> {
-            if (location != null) {
-                LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                zoomToCurrentLocation(latLng);
-            }
-        });
+    private void addFriendMarker(String userId, LatLng location) {
+        mMap.addMarker(new MarkerOptions().position(location).title(userId));
     }
 
     @Override

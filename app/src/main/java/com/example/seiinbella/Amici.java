@@ -171,21 +171,27 @@ public class Amici extends AppCompatActivity {
     }
 
     // Funzione per accettare una richiesta di amicizia
+    // Funzione per accettare una richiesta di amicizia
     private void acceptRequest(String requestId) {
         db.collection("richiesteAmicizia").document(requestId).get().addOnSuccessListener(document -> {
             String from = document.getString("da");
             String to = document.getString("a");
 
             Map<String, Object> friendship = new HashMap<>();
-            friendship.put("userIds", Arrays.asList(from, to));
+            friendship.put("userId1", from);
+            friendship.put("userId2", to);
 
-            db.collection("friends").add(friendship).addOnSuccessListener(aVoid -> {
-                db.collection("richiesteAmicizia").document(requestId).update("stato", "accettato");
-                loadFriendRequests();
-                loadFriends();
+            db.collection("friends").add(friendship).addOnSuccessListener(documentReference -> {
+                db.collection("richiesteAmicizia").document(requestId).update("stato", "accettato")
+                        .addOnSuccessListener(aVoid -> {
+                            loadFriendRequests();
+                            loadFriends();
+                        })
+                        .addOnFailureListener(e -> Log.e("Amici", "Errore nell'aggiornamento dello stato della richiesta", e));
             }).addOnFailureListener(e -> Log.e("Amici", "Errore nell'aggiunta dell'amico", e));
         }).addOnFailureListener(e -> Log.e("Amici", "Errore nel recupero della richiesta di amicizia", e));
     }
+
 
     // Funzione per rifiutare una richiesta di amicizia
     private void declineRequest(String requestId) {

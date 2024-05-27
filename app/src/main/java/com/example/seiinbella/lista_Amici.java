@@ -1,5 +1,6 @@
 package com.example.seiinbella;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -8,17 +9,19 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.seiinbella.FriendLocationListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class lista_Amici extends AppCompatActivity {
+public class lista_Amici extends AppCompatActivity implements FriendLocationListener {
 
     private RecyclerView friendsRecyclerView;
     private FirebaseFirestore db;
@@ -30,7 +33,6 @@ public class lista_Amici extends AppCompatActivity {
         setContentView(R.layout.activity_lista_amici);
 
         friendsRecyclerView = findViewById(R.id.friends_recycler_view);
-
         db = FirebaseFirestore.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -74,18 +76,15 @@ public class lista_Amici extends AppCompatActivity {
     }
 
     private void setupFriendsRecyclerView(List<String> friendsList) {
-        FriendsAdapter friendsAdapter = new FriendsAdapter(friendsList, new FriendsAdapter.OnFriendActionListener() {
-            @Override
-            public void onFriendAction(String friendEmail) {
-                removeFriend(friendEmail);
-            }
-        });
+        FriendsAdapter friendsAdapter = new FriendsAdapter(friendsList, friendEmail -> removeFriend(friendEmail, friendsList));
         friendsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         friendsRecyclerView.setAdapter(friendsAdapter);
+
+        // Get friend locations
+        getFriendLocations(friendsList);
     }
 
-    // Funzione per rimuovere un amico
-    private void removeFriend(String friendEmail) {
+    private void removeFriend(String friendEmail, List<String> friendsList) {
         db.collection("friends")
                 .whereArrayContains("userIds", currentUser.getEmail())
                 .get()
@@ -97,15 +96,43 @@ public class lista_Amici extends AppCompatActivity {
                                 db.collection("friends").document(document.getId()).delete()
                                         .addOnSuccessListener(aVoid -> {
                                             Toast.makeText(lista_Amici.this, "Amico rimosso", Toast.LENGTH_SHORT).show();
-                                            loadFriends(); // Ricarica la lista degli amici
+                                            friendsList.remove(friendEmail);
+                                            setupFriendsRecyclerView(friendsList); // Reload friends list after removing
                                         })
-                                        .addOnFailureListener(e -> Log.e("lista_Amici", "Errore nella rimozione dell'amico", e));
+                                        .addOnFailureListener(e -> Log.e("ListaAmici", "Errore nella rimozione dell'amico", e));
                                 break;
                             }
                         }
                     } else {
-                        Log.e("lista_Amici", "Errore nel recupero degli amici", task.getException());
+                        Log.e("ListaAmici", "Errore nel recupero degli amici", task.getException());
                     }
                 });
     }
+
+    private void getFriendLocations(List<String> friendsList) {
+        for (String friendEmail : friendsList) {
+            db.collection("users")
+                    .document(friendEmail)
+                    .get()
+                    .addOnSuccessListener(documentSnapshot -> {
+                        if (documentSnapshot.exists()) {
+                            double latitude = documentSnapshot.getDouble("latitude");
+                            double longitude = documentSnapshot.getDouble("longitude");
+                            LatLng friendLocation = new LatLng(latitude, longitude);
+                            onFriendLocationReceived(friendEmail, friendLocation);
+                        }
+                    })
+                    .addOnFailureListener(e -> Log.e("ListaAmici", "Error getting friend location", e));
+        }
+    }
+
+    public void onFriendLocationReceived(String friendEmail, LatLng location) {
+        Intent intent = new Intent(this, Maps_Activity.class);
+        intent.putExtra("friendEmail", friendEmail);
+        intent.putExtra("friendLocation", location);
+        startActivity(intent);
+    }
+
+
 }
+
